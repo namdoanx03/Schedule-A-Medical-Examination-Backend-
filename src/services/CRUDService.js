@@ -6,19 +6,19 @@ const salt = bcrypt.genSaltSync(10);
 let createNewUser = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password)
+            let hashPassWordFromBcrypt = await hashUserPassword(data.password)
             await db.User.create({
                 email: data.email,
-                password: hashPasswordFromBcrypt,
+                password: hashPassWordFromBcrypt,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 address: data.address,
-                phoneNumber: data.phoneNumber,
+                phonenumber: data.phonenumber,
                 gender: data.gender === '1' ? true : false,
                 roleId: data.roleId,
             })
-            resolve('OK ! Create a new user succcess')
-        } catch (error) {
+            resolve('create new user succeed');
+        } catch (e) {
             reject(e)
         }
     })
@@ -26,11 +26,15 @@ let createNewUser = async (data) => {
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
         try {
-            var hashPassword = await bcrypt.hashSync(password, salt);
-            resolve(hashPassword)
-        } catch (error) {
-            reject(e)
+            //lưu ý, truyền vào đúng password cần hash
+            // let hashPassWord = await bcrypt.hashSync("B4c0/\/", salt); => copy paste mà ko edit nè
+            let hashPassWord = bcrypt.hashSync(password, salt);
+
+            resolve(hashPassWord);
+        } catch (e) {
+            reject(e);
         }
+
     })
 }
 let getAllUser = () => {
@@ -40,7 +44,7 @@ let getAllUser = () => {
                 raw: true
             })
             resolve(users)
-        } catch (error) {
+        } catch (e) {
             reject(e)
         }
     })
@@ -50,59 +54,72 @@ let getUserInfoById = (userId) => {
         try {
             let user = await db.User.findOne({
                 where: { id: userId },
-                raw: true
-            })
+                raw: true,
+
+            });
+
             if (user) {
                 resolve(user)
             } else {
                 resolve({})
             }
         } catch (e) {
-            reject(e)
+            reject(e);
         }
     })
 }
-let updateUserData = async (data) => {
+
+let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: { id: data.id }
+                where: { id: data.id },
+
             })
             if (user) {
-                user.firstName = data.firstName
-                user.lastName = data.lastName
-                user.address = data.address
+                user.firstName = data.firstName;
+                user.lastName = data.lastName;
+                user.address = data.address;
 
-                await user.save()
-                let allUsers = await db.User.findAll()
-                resolve(allUsers)
+                await user.save();
+                let allUsers = await db.User.findAll();
+                resolve(allUsers);
             } else {
-                resolve()
+                resolve();
+
             }
-        } catch (error) {
-            console.log(e)
+
+        } catch (e) {
+            console.log(e);
         }
     })
 }
-let deleteUserById = async (userId) => {
-    return new Promise(async(resolve, reject)=> {
+
+let deleteUserById = (userId) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where :{id: userId}
+                where: { id: userId }
             })
-            if(user){
-                user.destroy()
+            if (user) {
+                await user.destroy();
+
             }
-            resolve() //return
-        } catch (error) {
-            reject(e)
+
+            resolve();
+
+        } catch (e) {
+            reject(e);
         }
     })
 }
+
+
+
 module.exports = {
     createNewUser: createNewUser,
     getAllUser: getAllUser,
     getUserInfoById: getUserInfoById,
     updateUserData: updateUserData,
-    deleteUserById: deleteUserById
+    deleteUserById: deleteUserById,
 }
