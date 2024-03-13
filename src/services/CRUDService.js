@@ -3,6 +3,7 @@ import db from '../models/index'
 // import { Promise } from 'sequelize';
 
 const salt = bcrypt.genSaltSync(10);
+
 let createNewUser = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
