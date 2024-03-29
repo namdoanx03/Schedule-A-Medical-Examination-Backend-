@@ -26,7 +26,7 @@ let handleUserLogin = (email, password) => {
             if (isExist) {
                 //user already exist
                 let user = await db.User.findOne({
-                    attributes: ['email', 'roleId', 'password'],
+                    attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'],
                     where: { email: email },
                     raw: true,
 
@@ -130,9 +130,10 @@ let createNewUser = (data) => {
                     firstName: data.firstName,
                     lastName: data.lastName,
                     address: data.address,
-                    phonenumber: data.phonenumber,
-                    gender: data.gender === '1' ? true : false,
+                    phoneNumber: data.phonenumber,
+                    gender: data.gender,
                     roleId: data.roleId,
+                    positionId: data.positionId
                 })
                 resolve({
                     errCode: 0,
@@ -208,8 +209,8 @@ let getAllCodeService = (typeInput) => {
         try {
             if (!typeInput) {
                 resolve({
-                    errCode:1,
-                    errMessage:'Missing required paremeters !'
+                    errCode: 1,
+                    errMessage: 'Missing required paremeters !'
                 })
             } else {
                 let res = {}
