@@ -1,7 +1,7 @@
 require('dotenv').config()
 import nodemailer from 'nodemailer'
 
-let sendSimpleEmail = async (datasend) => {
+let sendSimpleEmail = async (dataSend) => {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -15,23 +15,42 @@ let sendSimpleEmail = async (datasend) => {
     // send mail with defined transport object
     let info = await transporter.sendMail({
         from: '"Nam Doãn 👻" <dpnbro1102@gmail.com>', // sender address
-        to: datasend.reciverEmail, // list of receivers
+        to: dataSend.reciverEmail, // list of receivers
         subject: "Thông tin đặt lịch khám bệnh ✔", // Subject line
-        html: `
-            <h3>Xin chào ${datasend.patientName}!</h3>
-            <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên Namdoanx Hospital</p>
-            <p>Thông tin đặt lịch khám bệnh:</p>
-            <div><b>Thời gian: ${datasend.time}</b></div>
-            <div><b>Bác sĩ: ${datasend.doctorName}</b></div>
-            <p>Nếu các thông tin trên là đúng sự thật , vui lòng click vào đường link bên dưới
-            dể xác nhận và hoàn tất thủ tục đặt lịch khám bệnh</p>
-            <div><a href = ${datasend.redirectLink} target="_blank">Click here</a></div>
-            <div>Xin chân thành cảm ơn!</div>
-        `, // html body
+        html: getBodyHTMLEmail(dataSend)
     });
 
 }
-
+let getBodyHTMLEmail = (dataSend) => {
+    let result = ''
+    if (dataSend.language === 'vi') {
+        result =
+            `
+        <h3>Xin chào ${dataSend.patientName}!</h3>
+            <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên Namdoanx Hospital</p>
+            <p>Thông tin đặt lịch khám bệnh:</p>
+            <div><b>Thời gian: ${dataSend.time}</b></div>
+            <div><b>Bác sĩ: ${dataSend.doctorName}</b></div>
+            <p>Nếu các thông tin trên là đúng sự thật , vui lòng click vào đường link bên dưới
+            dể xác nhận và hoàn tất thủ tục đặt lịch khám bệnh</p>
+            <div><a href = ${dataSend.redirectLink} target="_blank">Click here</a></div>
+            <div>Xin chân thành cảm ơn!</div>
+        `
+    }
+    if (dataSend.language === 'en') {
+        `
+        <h3>Dear ${dataSend.patientName}!</h3>
+            <p>You received this email because you made an online medical appointment at Namdoanx Hospital</p>
+            <p>Information for scheduling medical examination:</p>
+            <div><b>Time: ${dataSend.time}</b></div>
+            <div><b>Doctor: ${dataSend.doctorName}</b></div>
+            <p>If the above information is true, please click on the link below to confirm and complete the medical appointment procedure.</p>
+            <div><a href = ${dataSend.redirectLink} target="_blank">Click here</a></div>
+            <div>Sincerely thank!</div>
+        `
+    }
+    return result
+}
 
 module.exports = {
     sendSimpleEmail: sendSimpleEmail
