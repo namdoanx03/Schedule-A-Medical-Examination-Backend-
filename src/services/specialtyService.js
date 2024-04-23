@@ -1,4 +1,5 @@
 const db = require("../models")
+
 let createSpecialty = (data) =>{
     return new Promise(async(resolve, reject) => {
         try {
@@ -14,7 +15,7 @@ let createSpecialty = (data) =>{
             }else{
                 await db.Specialty.create({
                     name: data.name,
-                    imageData: data.imageBase64,
+                    image: data.imageBase64,
                     descriptionHTML: data.descriptionHTML,
                     descriptionMarkdown: data.descriptionMarkdown
                 })
@@ -28,6 +29,30 @@ let createSpecialty = (data) =>{
         }
     })
 }
+let getAllSpecialty = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await db.Specialty.findAll({
+
+            })
+            if (data && data.length > 0){
+                data.map(item => {
+                    item.image = new Buffer(item.image, 'base64').toString('binary')
+                    return item
+                })  
+                 
+            }
+            resolve({
+                errCode: 0,
+                errMessage: 'Ok',
+                data
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports= {
-    createSpecialty: createSpecialty
+    createSpecialty: createSpecialty,
+    getAllSpecialty: getAllSpecialty
 }

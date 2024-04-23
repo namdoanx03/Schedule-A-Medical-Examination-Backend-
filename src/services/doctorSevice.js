@@ -57,6 +57,7 @@ let saveDetailInforDoctor = (inputData) => {
             if (!inputData.doctorId 
                 || !inputData.contentHTML 
                 || !inputData.contentMarkdown 
+                || !inputData.action
                 || !inputData.selectedPrice
                 || !inputData.selectedPayment
                 || !inputData.selectedProvince
