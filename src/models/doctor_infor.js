@@ -2,6 +2,7 @@
 const {
     Model
 } = require('sequelize');
+const clinic = require('./clinic');
 module.exports = (sequelize, DataTypes) => {
     class Doctor_Infor extends Model {
         /**
@@ -20,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     };
     Doctor_Infor.init({
         doctorId: DataTypes.INTEGER,
+        specialtyId:DataTypes.INTEGER,
+        clinicId:DataTypes.INTEGER,
         priceId: DataTypes.STRING,
         provinceId: DataTypes.STRING,
         paymentId: DataTypes.STRING,
