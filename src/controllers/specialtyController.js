@@ -81,11 +81,12 @@ let udateSpecialtyData = async (req, res) => {
   }
 };
 
+
 module.exports = {
   createSpecialty: createSpecialty,
   getAllSpecialty: getAllSpecialty,
   getDetailSpecialtyById: getDetailSpecialtyById,
-  filterSpecialties: filterSpecialties,
-  deleteSpecialty: deleteSpecialty,
-  udateSpecialtyData: udateSpecialtyData,
+  filterSpecialties:filterSpecialties,
+  deleteSpecialty:deleteSpecialty,
+  udateSpecialtyData:udateSpecialtyData
 };

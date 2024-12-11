@@ -1,4 +1,4 @@
-import doctorService from "../services/doctorSevice";
+import doctorService from "../services/doctorService";
 
 let getTopDoctorHome = async (req, res) => {
   try {
@@ -125,7 +125,9 @@ let getListPatientForDoctor = async (req, res) => {
 
 let getBookingById = async (req, res) => {
   try {
-    let infor = await doctorService.getBookingById(req.query.bookingId);
+    let infor = await doctorService.getBookingById(
+      req.query.bookingId,
+    );
     return res.status(200).json(infor);
   } catch (e) {
     console.log(e);
@@ -135,6 +137,8 @@ let getBookingById = async (req, res) => {
     });
   }
 };
+
+
 
 let sendRemedy = async (req, res) => {
   try {
@@ -201,6 +205,6 @@ module.exports = {
   sendRemedy: sendRemedy,
   cancelBooking: cancelBooking,
   createRemedy: createRemedy,
-  getBookingById: getBookingById,
-  filterDoctors: filterDoctors,
+  getBookingById:getBookingById,
+  filterDoctors:filterDoctors
 };

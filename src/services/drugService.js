@@ -22,15 +22,14 @@ let filter = (data) => {
     try {
       //name
       let drugs = await db.Drug.findAll({
-        where: {
-          [Op.or]: [
-            {
-              name: {
-                [Op.like]: `%${data.name}%`,
-              },
-            },
-          ],
-        },
+          where: {
+            [Op.or]: [{
+                    name: {
+                        [Op.like]: `%${data.name}%`
+                    }
+                }
+            ]
+          }
       });
 
       resolve(drugs);
@@ -41,6 +40,7 @@ let filter = (data) => {
 };
 
 let getDrugInfoById = (drugId) => {
+
   return new Promise(async (resolve, reject) => {
     try {
       let drug = await db.Drug.findOne({
@@ -72,7 +72,7 @@ let udateDrugData = (data) => {
         await drug.save();
 
         resolve({
-          errCode: 0,
+          errCode:0
         });
       } else {
         resolve();
@@ -88,11 +88,11 @@ let deleteDrugById = (drugId) => {
     try {
       await db.Drug.destroy({
         where: {
-          id: drugId,
-        },
+          id: drugId
+        }
       });
       resolve({
-        errCode: 0,
+        errCode:0
       });
     } catch (e) {
       reject(e);
@@ -104,5 +104,5 @@ module.exports = {
   udateDrugData: udateDrugData,
   getDrugInfoById: getDrugInfoById,
   createNewDrug: createNewDrug,
-  filter: filter,
+  filter:filter
 };

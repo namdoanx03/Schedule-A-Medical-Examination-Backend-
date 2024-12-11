@@ -9,6 +9,7 @@ import drugController from "../controllers/drugController";
 let router = express.Router();
 
 let initWebRoutes = (app) => {
+
   router.post("/api/login-google", userController.handleLoginGoogle);
   router.post("/api/login", userController.handleLogin);
   router.get("/api/get-all-users", userController.handleGetAllUsers);
@@ -23,11 +24,26 @@ let initWebRoutes = (app) => {
   );
   router.get("/api/allcode", userController.getAllCode);
   //google signin
-  router.post("/api/login-google", userController.handleLoginGoogle);
-  router.post("/api/filter-users", userController.filterUsers);
-  router.post("/api/filter-restore-users", userController.filterRestoreUsers);
-  router.post("/api/handle-restore-user", userController.handleRestoreUser);
-  router.post("/api/delete-restore-user", userController.deleteRestoreUser);
+  router.post(
+    "/api/login-google",
+    userController.handleLoginGoogle
+  );
+  router.post(
+    "/api/filter-users",
+    userController.filterUsers
+  );
+  router.post(
+    "/api/filter-restore-users",
+    userController.filterRestoreUsers
+  );
+  router.post(
+    "/api/handle-restore-user",
+    userController.handleRestoreUser
+  );
+  router.post(
+    "/api/delete-restore-user",
+    userController.deleteRestoreUser
+  );
 
   router.post("/api/top-doctor-home", doctorController.getTopDoctorHome);
   router.get("/api/get-all-doctors", doctorController.getAllDoctors);
@@ -53,11 +69,17 @@ let initWebRoutes = (app) => {
     "/api/get-list-patient-for-doctor",
     doctorController.getListPatientForDoctor
   );
-  router.get("/api/get-booking-by-id", doctorController.getBookingById);
+  router.get(
+    "/api/get-booking-by-id",
+    doctorController.getBookingById
+  );
   router.post("/api/send-remedy", doctorController.sendRemedy);
   router.post("/api/create-remedy", doctorController.createRemedy);
   router.post("/api/cancel-booking", doctorController.cancelBooking);
-  router.post("/api/filter-doctors", doctorController.filterDoctors);
+  router.post(
+    "/api/filter-doctors",
+    doctorController.filterDoctors
+  );
 
   router.post(
     "/api/patient-book-appointment",
@@ -67,7 +89,10 @@ let initWebRoutes = (app) => {
     "/api/verify-book-appointment",
     patientController.postVerifyBookAppointment
   );
-  router.post("/api/filter-history", patientController.filterHistory);
+  router.post(
+    "/api/filter-history",
+    patientController.filterHistory
+  );
 
   router.post("/api/create-new-specialty", specialtyController.createSpecialty);
   router.post("/api/get-specialty", specialtyController.getAllSpecialty);
@@ -76,7 +101,10 @@ let initWebRoutes = (app) => {
     specialtyController.getDetailSpecialtyById
   );
   router.post("/api/filter-specialties", specialtyController.filterSpecialties);
-  router.get("/api/delete-specialty", specialtyController.deleteSpecialty);
+  router.get(
+    "/api/delete-specialty",
+    specialtyController.deleteSpecialty
+  );
   router.post("/api/edit-specialty", specialtyController.udateSpecialtyData);
 
   router.post("/api/create-new-clinic", clinicController.createClinic);
@@ -87,7 +115,10 @@ let initWebRoutes = (app) => {
   );
   router.post("/api/filter-clinics", clinicController.filterClinics);
   router.post("/api/edit-clinic", clinicController.udateClinicData);
-  router.get("/api/delete-clinic", clinicController.deleteClinic);
+  router.get(
+    "/api/delete-clinic",
+    clinicController.deleteClinic
+  );
 
   //admin
   router.get("/api/get-weekly-revenue", adminController.getWeeklyRevenue);
@@ -116,6 +147,7 @@ let initWebRoutes = (app) => {
   router.put("/api/edit-drug", drugController.handleEditDrug);
   router.delete("/api/delete-drug", drugController.handleDeleteDrug);
   router.get("/api/get-drug-by-id", drugController.getDrugInfoById);
+
 
   return app.use("/", router);
 };

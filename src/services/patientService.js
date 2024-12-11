@@ -1,8 +1,9 @@
-import { Op } from "sequelize";
+import { Op } from 'sequelize';
 import db from "../models/index";
 require("dotenv").config();
 import emailService from "./emailService";
 import { v4 as uuidv4 } from "uuid";
+
 
 let buildUrlEmail = (doctorId, token) => {
   let result = `${process.env.URL_REACT}/verify-booking?token=${token}&doctorId=${doctorId}`;
@@ -18,39 +19,41 @@ let postBookAppointment = (data) => {
         !data.doctorId ||
         !data.timeType ||
         !data.date ||
-        !data.patientName
+        !data.patientName 
       ) {
         resolve({
           errCode: 1,
           errMessage: "Missing required parameter",
         });
       } else {
-        //check limit booking on table schedule
-        let schedule = await db.Schedule.findOne({
-          where: {
-            date: data.date,
-            timeType: data.timeType,
-            doctorId: data.doctorId,
-          },
-          raw: false, //chu y cho nay do ben file config cau hinh cho query
-        });
+              //check limit booking on table schedule
+              let schedule = await db.Schedule.findOne({
+                where: { 
+                  date: data.date,
+                  timeType: data.timeType,
+                  doctorId: data.doctorId  
+                },
+                raw: false, //chu y cho nay do ben file config cau hinh cho query
+              });
+      
+              if(schedule){
+                  if(schedule.currentNumber<schedule.maxNumber){
+                    schedule.currentNumber = parseInt(schedule.currentNumber) + 1;
+                    await schedule.save();
+                  }else{
+                    resolve({
+                      errCode: 3,
+                      errMessage: "Limit max number booking!",
+                    });
+                  }
+              }else{
+                  resolve({
+                    errCode: 3,
+                    errMessage: "Limit max number booking!",
+                  });
+              }
+              
 
-        if (schedule) {
-          if (schedule.currentNumber < schedule.maxNumber) {
-            schedule.currentNumber = parseInt(schedule.currentNumber) + 1;
-            await schedule.save();
-          } else {
-            resolve({
-              errCode: 3,
-              errMessage: "Limit max number booking!",
-            });
-          }
-        } else {
-          resolve({
-            errCode: 3,
-            errMessage: "Limit max number booking!",
-          });
-        }
 
         let token = uuidv4(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
         await emailService.sendSimpleEmail({
@@ -74,9 +77,12 @@ let postBookAppointment = (data) => {
         //   },
         // });
 
+  
+
         let user = await db.User.findOne({
           where: { email: data.email },
         });
+
 
         //create a booking record
         if (user) {
@@ -87,12 +93,12 @@ let postBookAppointment = (data) => {
             date: data.date,
             timeType: data.timeType,
             token: token,
-            patientName: data.patientName,
-            patientPhoneNumber: data.phoneNumber,
-            patientAddress: data.address,
+            patientName:data.patientName,
+            patientPhoneNumber:data.phoneNumber,
+            patientAddress:data.address,
             patientReason: data.reason,
             patientGender: data.selectedGender,
-            patientBirthday: data.date,
+            patientBirthday: data.date
           });
         }
         // if (user && user[0]) {
@@ -153,6 +159,7 @@ let postVerifyBookAppointment = (data) => {
   });
 };
 
+
 let filterHistory = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -162,112 +169,90 @@ let filterHistory = (data) => {
           errMessage: "Missing required parameter",
         });
       } else {
-        let startDate = data.startDate ? data.startDate : null;
-        let endDate = data.endDate ? data.endDate : null;
+        let startDate=data.startDate ? data.startDate : null
+        let endDate=data.endDate ? data.endDate : null
 
-        let dataHistories = [];
-        if (startDate && endDate) {
-          dataHistories = await db.History.findAll({
-            where: {
-              patientId: data.patientId,
-              createdAt: {
-                [Op.lt]: new Date(
-                  new Date(endDate).getTime() + 60 * 60 * 24 * 1000 - 1
-                ),
-                [Op.gt]: new Date(startDate),
-              },
-            },
-            order: [["createdAt", "DESC"]],
-            attributes: [
-              "id",
-              "patientId",
-              "doctorId",
-              "description",
-              "drugs",
-              "files",
-              "reason",
-              "createdAt",
-              "updatedAt",
-            ],
-            include: [
-              {
-                model: db.User,
-                as: "doctorDataHistory",
-                attributes: ["id", "email", "firstName", "lastName"],
+        let dataHistories=[]
+        if(startDate && endDate){
+            dataHistories = await db.History.findAll({
+              where: {
+                    patientId:data.patientId,
+                    createdAt: {
+                        [Op.lt]: new Date(new Date(endDate).getTime() + 60 * 60 * 24 * 1000 - 1),
+                        [Op.gt]: new Date(startDate)
+                    },
+                },
+                order: [['createdAt', 'DESC']],
+                attributes: ["id", "patientId", "doctorId", "description", "drugs", "files", "reason", "createdAt", "updatedAt"],
                 include: [
                   {
-                    model: db.Doctor_Infor,
-                    attributes: ["id", "doctorId", "specialtyId", "clinicId"],
+                    model: db.User,
+                    as: "doctorDataHistory",
+                    attributes: ["id","email", "firstName","lastName"],
                     include: [
                       {
-                        model: db.Specialty,
-                        as: "specialtyData",
-                        attributes: ["name"],
-                      },
-                      {
-                        model: db.Clinic,
-                        as: "clinicData",
-                        attributes: ["name"],
+                        model: db.Doctor_Infor,
+                        attributes: ["id","doctorId","specialtyId","clinicId"],
+                        include: [
+                          {
+                            model: db.Specialty,
+                            as: "specialtyData",
+                            attributes: ["name"],
+                          },
+                          {
+                            model: db.Clinic,
+                            as: "clinicData",
+                            attributes: ["name"],
+                          },
+                        ],
                       },
                     ],
                   },
                 ],
-              },
-            ],
-            raw: true,
-            nest: true,
-          });
-        } else {
-          dataHistories = await db.History.findAll({
-            where: {
-              patientId: data.patientId,
-            },
-            order: [["createdAt", "DESC"]],
-            attributes: [
-              "id",
-              "patientId",
-              "doctorId",
-              "description",
-              "drugs",
-              "files",
-              "reason",
-              "createdAt",
-              "updatedAt",
-            ],
-            include: [
-              {
-                model: db.User,
-                as: "doctorDataHistory",
-                attributes: ["id", "email", "firstName", "lastName"],
+                raw: true,
+                nest: true,
+            })
+        }else{
+            dataHistories = await db.History.findAll({
+              where: {
+                    patientId:data.patientId,
+                },
+                order: [['createdAt', 'DESC']],
+                attributes: ["id", "patientId", "doctorId", "description", "drugs", "files","reason","createdAt", "updatedAt"],
                 include: [
                   {
-                    model: db.Doctor_Infor,
-                    attributes: ["id", "doctorId", "specialtyId", "clinicId"],
+                    model: db.User,
+                    as: "doctorDataHistory",
+                    attributes: ["id","email", "firstName","lastName"],
                     include: [
                       {
-                        model: db.Specialty,
-                        as: "specialtyData",
-                        attributes: ["name"],
-                      },
-                      {
-                        model: db.Clinic,
-                        as: "clinicData",
-                        attributes: ["name"],
+                        model: db.Doctor_Infor,
+                        attributes: ["id","doctorId","specialtyId","clinicId"],
+                        include: [
+                          {
+                            model: db.Specialty,
+                            as: "specialtyData",
+                            attributes: ["name"],
+                          },
+                          {
+                            model: db.Clinic,
+                            as: "clinicData",
+                            attributes: ["name"],
+                          },
+                        ],
                       },
                     ],
                   },
                 ],
-              },
-            ],
-            raw: true,
-            nest: true,
-          });
+                raw: true,
+                nest: true,
+            })
         }
-
-        resolve({
-          errCode: 0,
-          data: dataHistories,
-        });
+       
+          resolve({
+            errCode: 0,
+            data: dataHistories,
+          });
       }
     } catch (e) {
       reject(e);
@@ -278,5 +263,5 @@ let filterHistory = (data) => {
 module.exports = {
   postBookAppointment: postBookAppointment,
   postVerifyBookAppointment: postVerifyBookAppointment,
-  filterHistory: filterHistory,
+  filterHistory:filterHistory
 };

@@ -186,10 +186,10 @@ module.exports = {
   getAllCode: getAllCode,
   postForgotPassword: postForgotPassword,
   postVerifyRetrievePassword: postVerifyRetrievePassword,
-  handleLoginGoogle: handleLoginGoogle,
-  filterUsers: filterUsers,
-  handleEditPassword: handleEditPassword,
-  filterRestoreUsers: filterRestoreUsers,
-  handleRestoreUser: handleRestoreUser,
-  deleteRestoreUser: deleteRestoreUser,
+  handleLoginGoogle:handleLoginGoogle,
+  filterUsers:filterUsers,
+  handleEditPassword:handleEditPassword,
+  filterRestoreUsers:filterRestoreUsers,
+  handleRestoreUser:handleRestoreUser,
+  deleteRestoreUser:deleteRestoreUser
 };

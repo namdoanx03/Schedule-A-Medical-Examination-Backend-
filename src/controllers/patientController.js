@@ -1,4 +1,4 @@
-import patientService from "../services/patientServices";
+import patientService from "../services/patientService";
 
 let postBookAppointment = async (req, res) => {
   try {
@@ -39,9 +39,9 @@ let filterHistory = async (req, res) => {
   }
 };
 
+
 module.exports = {
   postBookAppointment: postBookAppointment,
   postVerifyBookAppointment: postVerifyBookAppointment,
-  filterHistory,
-  filterHistory,
+  filterHistory,filterHistory
 };

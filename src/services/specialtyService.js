@@ -36,9 +36,10 @@ let createSpecialty = (data) => {
 let getAllSpecialty = (dataInput) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let options = {};
+      let options = { 
+      };
 
-      if (dataInput.limit) options.limit = parseInt(dataInput.limit);
+      if(dataInput.limit) options.limit=parseInt(dataInput.limit)
 
       let data = await db.Specialty.findAll(options);
 
@@ -70,13 +71,7 @@ let getDetailSpecialtyById = (inputId, location) => {
       } else {
         let data = await db.Specialty.findOne({
           where: { id: inputId },
-          attributes: [
-            "id",
-            "name",
-            "descriptionHTML",
-            "descriptionMarkdown",
-            "image",
-          ],
+          attributes: ["id","name","descriptionHTML", "descriptionMarkdown","image"],
         });
 
         if (data) {
@@ -114,20 +109,20 @@ let getDetailSpecialtyById = (inputId, location) => {
 let filterSpecialties = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let options = {
+      let options = { 
         where: {},
         raw: true,
-        nest: true,
+        nest: true, 
       };
-      let name = data.name;
+      let name=data.name;
 
-      if (name) {
-        options.where.name = {
-          [Op.like]: "%" + name + "%",
-        };
-      }
+      if(name){
+        options.where.name={
+          [Op.like]: '%'+name+'%'
+        }
+      } 
 
-      let dataSpecialties = [];
+      let dataSpecialties=[]
       dataSpecialties = await db.Specialty.findAll(options);
 
       if (dataSpecialties && dataSpecialties.length > 0) {
@@ -140,10 +135,10 @@ let filterSpecialties = (data) => {
       resolve({
         errCode: 0,
         errMessage: "Ok!",
-        data: dataSpecialties,
+        data:dataSpecialties,
       });
     } catch (e) {
-      console.log(e);
+      console.log(e)
       reject(e);
     }
   });
@@ -216,7 +211,7 @@ module.exports = {
   createSpecialty: createSpecialty,
   getAllSpecialty: getAllSpecialty,
   getDetailSpecialtyById: getDetailSpecialtyById,
-  filterSpecialties: filterSpecialties,
-  deleteSpecialty: deleteSpecialty,
-  udateSpecialtyData: udateSpecialtyData,
+  filterSpecialties:filterSpecialties,
+  deleteSpecialty:deleteSpecialty,
+  udateSpecialtyData:udateSpecialtyData
 };

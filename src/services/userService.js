@@ -3,13 +3,13 @@ import bcrypt from "bcryptjs";
 require("dotenv").config();
 import emailService from "./emailService";
 import { v4 as uuidv4 } from "uuid";
-var fs = require("fs");
-const clientHttps = require("https");
+var fs = require('fs');
+const clientHttps = require('https');
 require("dotenv").config();
 const { Op } = require("sequelize");
 
-const { OAuth2Client } = require("google-auth-library");
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 const googleAuth = async (token) => {
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -17,10 +17,10 @@ const googleAuth = async (token) => {
   });
   const payload = ticket.getPayload();
 
-  const { sub, email, name, picture } = payload;
-  const userId = sub;
-  return { userId, email, fullname: name, photoUrl: picture };
-};
+  const {sub,email,name,picture} = payload;
+  const userId=sub;
+  return {userId,email,fullname:name,photoUrl:picture};
+}
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -29,8 +29,9 @@ let base64_encode = (file) => {
   // read binary data
   var bitmap = fs.readFileSync(file);
   // convert binary data to base64 encoded string
-  return new Buffer(bitmap).toString("base64");
-};
+  return new Buffer(bitmap).toString('base64');
+}
+
 
 let handleUserLogin = (email, password) => {
   return new Promise(async (resolve, reject) => {
@@ -51,7 +52,7 @@ let handleUserLogin = (email, password) => {
             "address",
             "gender",
             "phonenumber",
-            "status",
+            "status"
           ],
           include: [
             {
@@ -83,7 +84,7 @@ let handleUserLogin = (email, password) => {
           }
 
           //check status
-          if (user && user.status && user.status != 0) {
+          if(user && user.status && user.status!=0){
             userData.errCode = 1;
             userData.errMessage = `Status is not active`;
           }
@@ -170,7 +171,7 @@ let createNewUser = async (data) => {
           roleId: data.roleId,
           positionId: data.positionId,
           image: data.avatar,
-          status: data.status ? data.status : 0,
+          status:data.status ? data.status : 0
         });
         resolve({
           errCode: 0,
@@ -218,10 +219,10 @@ let deleteUser = (userId) => {
           roleId: user.roleId,
           positionId: user.positionId,
           image: user.image,
-          status: user.status,
+          status:user.status
         });
 
-        if (newUser) {
+        if(newUser){
           await db.User.destroy({
             where: { id: userId },
           });
@@ -246,7 +247,7 @@ let udateUserData = (data) => {
           errMessage: "Missing required parameter",
         });
       }
-
+    
       let user = await db.User.findOne({
         where: { id: data.id },
         raw: false, //chu y cho nay do ben file config cau hinh cho query
@@ -392,35 +393,34 @@ let postVerifyRetrievePasswordService = async (data) => {
 function downloadImage(url, filepath) {
   return new Promise((resolve, reject) => {
     clientHttps.get(url, (res) => {
-      if (res.statusCode === 200) {
-        res
-          .pipe(fs.createWriteStream(filepath))
-          .on("error", reject)
-          .once("close", () => resolve(filepath));
-      } else {
-        // Consume response data to free up memory
-        res.resume();
-        reject(
-          new Error(`Request Failed With a Status Code: ${res.statusCode}`)
-        );
-      }
-    });
+          if (res.statusCode === 200) {
+              res.pipe(fs.createWriteStream(filepath))
+                  .on('error', reject)
+                  .once('close', () => resolve(filepath));
+          } else {
+              // Consume response data to free up memory
+              res.resume();
+              reject(new Error(`Request Failed With a Status Code: ${res.statusCode}`));
+
+          }
+      });
   });
 }
 
 let handleLoginGoogle = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let userData = {};
+    let userData = {};
 
-      let googleUser = await googleAuth(data.tokenId);
+     let googleUser = await googleAuth(data.tokenId)
 
-      //   downloadImage(googleUser.photoUrl, './src/public/google.png')
-      // .then(console.log)
-      // .catch(console.error);
+    //   downloadImage(googleUser.photoUrl, './src/public/google.png')
+    // .then(console.log)
+    // .catch(console.error);
 
-      // let avatar = base64_encode('./src/public/google.png')
+    // let avatar = base64_encode('./src/public/google.png')
 
+ 
       let user = await db.User.findOrCreate({
         where: { email: googleUser.email },
         defaults: {
@@ -432,8 +432,8 @@ let handleLoginGoogle = (data) => {
       });
 
       let currentUser;
-      if (user) {
-        currentUser = await db.User.findOne({
+      if(user){
+        currentUser= await db.User.findOne({
           where: { email: user[0].email },
           attributes: [
             "id",
@@ -445,7 +445,7 @@ let handleLoginGoogle = (data) => {
             "image",
             "address",
             "gender",
-            "phonenumber",
+            "phonenumber"
           ],
           include: [
             {
@@ -465,14 +465,16 @@ let handleLoginGoogle = (data) => {
         });
       }
 
-      if (currentUser) {
+      if(currentUser){
         userData.errCode = 0;
         userData.errMessage = "OK";
         delete currentUser.password;
         userData.user = currentUser;
       }
 
-      resolve(userData);
+      resolve(
+        userData
+      );
     } catch (e) {
       reject(e);
     }
@@ -482,49 +484,50 @@ let handleLoginGoogle = (data) => {
 let filterUsers = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let options = {
+      let options = { 
         where: {},
         raw: true,
-        nest: true,
+        nest: true, 
       };
-      let firstName = data.firstName;
-      let lastName = data.lastName;
-      let email = data.email;
-      let role = data.role;
-      let address = data.address;
-      let position = data.position;
-      let gender = data.gender;
+      let firstName=data.firstName;
+      let lastName=data.lastName;
+      let email=data.email;
+      let role=data.role;
+      let address=data.address;
+      let position=data.position;
+      let gender=data.gender;
 
-      if (firstName) {
-        options.where.firstName = {
-          [Op.like]: "%" + firstName + "%",
-        };
-      }
-      if (lastName) {
-        options.where.lastName = {
-          [Op.like]: "%" + lastName + "%",
-        };
-      }
-      if (email) {
-        options.where.email = {
-          [Op.like]: "%" + email + "%",
-        };
-      }
-      if (role) options.where.roleId = role;
-      if (address) {
-        options.where.address = {
-          [Op.like]: "%" + address + "%",
-        };
-      }
-      if (position) options.where.positionId = position;
-      if (gender) options.where.gender = gender;
+      if(firstName){
+        options.where.firstName={
+          [Op.like]: '%'+firstName+'%'
+        }
+      } 
+      if(lastName){
+        options.where.lastName={
+          [Op.like]:'%'+lastName+'%'
+        }
+      } 
+      if(email){
+          options.where.email={
+              [Op.like]:'%'+email+'%'
+          }
+      } 
+      if(role) options.where.roleId=role
+      if(address){
+          options.where.address={
+            [Op.like]:'%'+address+'%'
+          }
+      } 
+      if(position) options.where.positionId=position
+      if(gender) options.where.gender=gender
 
-      let dataUsers = [];
-      dataUsers = await db.User.findAll(options);
+      let dataUsers=[]
+      dataUsers=await db.User.findAll(options)
       resolve({
         errCode: 0,
         data: dataUsers,
       });
+       
     } catch (e) {
       reject(e);
     }
@@ -540,33 +543,29 @@ let handleEditPassword = (data) => {
           errMessage: "Missing required parameter",
         });
       } else {
+       
         let user = await db.User.findOne({
           where: { id: data.id },
           raw: false,
         });
         if (user) {
-          //compare password
-          let check = await bcrypt.compareSync(
-            data.currentPassword,
-            user.password
-          );
+           //compare password
+           let check = await bcrypt.compareSync(data.currentPassword, user.password);
 
-          if (check) {
-            let hashPasswordFromBcrypt = await hashUserPassword(
-              data.newPassword
-            );
-            user.password = hashPasswordFromBcrypt;
-            await user.save();
-            resolve({
-              errCode: 0,
-              message: "Update password success!",
-            });
-          } else {
-            resolve({
-              errCode: 1,
-              message: "wrong password!",
-            });
-          }
+           if (check) {
+              let hashPasswordFromBcrypt = await hashUserPassword(data.newPassword);
+              user.password = hashPasswordFromBcrypt;
+              await user.save();
+              resolve({
+                errCode: 0,
+                message: "Update password success!",
+              });
+           } else {
+              resolve({
+                errCode: 1,
+                message: "wrong password!",
+              });
+           }
         } else {
           resolve({
             errCode: 1,
@@ -580,52 +579,54 @@ let handleEditPassword = (data) => {
   });
 };
 
+
 let filterRestoreUsers = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let options = {
+      let options = { 
         where: {},
         raw: true,
-        nest: true,
+        nest: true, 
       };
-      let firstName = data.firstName;
-      let lastName = data.lastName;
-      let email = data.email;
-      let role = data.role;
-      let address = data.address;
-      let position = data.position;
-      let gender = data.gender;
+      let firstName=data.firstName;
+      let lastName=data.lastName;
+      let email=data.email;
+      let role=data.role;
+      let address=data.address;
+      let position=data.position;
+      let gender=data.gender;
 
-      if (firstName) {
-        options.where.firstName = {
-          [Op.like]: "%" + firstName + "%",
-        };
-      }
-      if (lastName) {
-        options.where.lastName = {
-          [Op.like]: "%" + lastName + "%",
-        };
-      }
-      if (email) {
-        options.where.email = {
-          [Op.like]: "%" + email + "%",
-        };
-      }
-      if (role) options.where.roleId = role;
-      if (address) {
-        options.where.address = {
-          [Op.like]: "%" + address + "%",
-        };
-      }
-      if (position) options.where.positionId = position;
-      if (gender) options.where.gender = gender;
+      if(firstName){
+        options.where.firstName={
+          [Op.like]: '%'+firstName+'%'
+        }
+      } 
+      if(lastName){
+        options.where.lastName={
+          [Op.like]:'%'+lastName+'%'
+        }
+      } 
+      if(email){
+          options.where.email={
+              [Op.like]:'%'+email+'%'
+          }
+      } 
+      if(role) options.where.roleId=role
+      if(address){
+          options.where.address={
+            [Op.like]:'%'+address+'%'
+          }
+      } 
+      if(position) options.where.positionId=position
+      if(gender) options.where.gender=gender
 
-      let dataUsers = [];
-      dataUsers = await db.restore_users.findAll(options);
+      let dataUsers=[]
+      dataUsers=await db.restore_users.findAll(options)
       resolve({
         errCode: 0,
         data: dataUsers,
       });
+       
     } catch (e) {
       reject(e);
     }
@@ -650,10 +651,10 @@ let handleRestoreUser = (data) => {
           roleId: user.roleId,
           positionId: user.positionId,
           image: user.image,
-          status: user.status,
+          status:user.status
         });
 
-        if (newUser) {
+        if(newUser){
           await db.restore_users.destroy({
             where: { email: user.email },
           });
@@ -661,8 +662,9 @@ let handleRestoreUser = (data) => {
       }
       resolve({
         errCode: 0,
-        message: "Restore user successfully!",
+        message: "Restore user successfully!"
       });
+       
     } catch (e) {
       reject(e);
     }
@@ -682,9 +684,9 @@ let deleteRestoreUser = (data) => {
         });
       }
       if (user) {
-        await db.restore_users.destroy({
-          where: { email: data.email },
-        });
+          await db.restore_users.destroy({
+            where: { email: data.email },
+          });
       }
       resolve({
         errCode: 0,
@@ -696,6 +698,9 @@ let deleteRestoreUser = (data) => {
   });
 };
 
+
+
+
 module.exports = {
   handleUserLogin: handleUserLogin,
   getAllUsers: getAllUsers,
@@ -705,10 +710,10 @@ module.exports = {
   getAllCodeService: getAllCodeService,
   postForgotPasswordService: postForgotPasswordService,
   postVerifyRetrievePasswordService: postVerifyRetrievePasswordService,
-  handleLoginGoogle: handleLoginGoogle,
-  filterUsers: filterUsers,
-  handleEditPassword: handleEditPassword,
-  filterRestoreUsers: filterRestoreUsers,
-  handleRestoreUser: handleRestoreUser,
-  deleteRestoreUser: deleteRestoreUser,
+  handleLoginGoogle:handleLoginGoogle,
+  filterUsers:filterUsers,
+  handleEditPassword:handleEditPassword,
+  filterRestoreUsers:filterRestoreUsers,
+  handleRestoreUser:handleRestoreUser,
+  deleteRestoreUser:deleteRestoreUser
 };

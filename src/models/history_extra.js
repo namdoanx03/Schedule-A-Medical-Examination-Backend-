@@ -9,16 +9,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+    
     }
   }
   History_Extra.init(
     {
-      history_id: DataTypes.INTEGER,
-      drugs: DataTypes.TEXT,
-      description_usage: DataTypes.STRING,
-      unit: DataTypes.INTEGER,
-      amount: DataTypes.INTEGER,
-      createdAt: DataTypes.DATE,
+        history_id: DataTypes.INTEGER,
+        drugs: DataTypes.TEXT,
+        description_usage: DataTypes.STRING,
+        unit: DataTypes.INTEGER,
+        amount: DataTypes.INTEGER,
+        createdAt: DataTypes.DATE,
     },
     {
       sequelize,

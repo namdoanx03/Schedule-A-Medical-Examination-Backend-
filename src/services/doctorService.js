@@ -877,13 +877,14 @@ let createRemedy = (data) => {
                 <th>Hướng dẫn sử dụng</th>
               </tr>
               ${data.listSeletedDrugs.map((drug) => {
-                return `
+                return (`
                   <tr>
                     <td>${drug.name}</td>
-                    <td>${handleGetValueUnitDrug(drug.unit, "vi")}</td>
+                    <td>${handleGetValueUnitDrug(drug.unit,"vi")}</td>
                     <td>${drug.amount}</td>
                     <td>${drug.description_usage}</td>
-                  </tr>`;
+                  </tr>`
+                );
               })}
           </table>
           <h3>Thông tin thêm: ${data.desciption}</h3>
@@ -906,13 +907,14 @@ let createRemedy = (data) => {
                 <th>User manual</th>
               </tr>
               ${data.listSeletedDrugs.map((drug) => {
-                return `
+                return (`
                   <tr>
                     <td>${drug.name}</td>
-                    <td>${handleGetValueUnitDrug(drug.unit, "vi")}</td>
+                    <td>${handleGetValueUnitDrug(drug.unit,"vi")}</td>
                     <td>${drug.amount}</td>
                     <td>${drug.description_usage}</td>
-                  </tr>`;
+                  </tr>`
+                );
               })}
           </table>
           <h3>More information: ${data.desciption}</h3>
@@ -923,7 +925,7 @@ let createRemedy = (data) => {
         let dataUriBase64;
 
         const images = await nodeHtmlToImage({
-          html: data.language == "vi" ? contentImageVi : contentImageEn,
+          html: data.language=="vi" ? contentImageVi : contentImageEn
         });
         let base64data = images.toString("base64");
         dataUriBase64 = "data:image/jpeg;base64," + base64data;

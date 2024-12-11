@@ -75,9 +75,10 @@ let udateClinicData = (data) => {
 let getAllClinic = (dataInput) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let options = {};
+      let options = { 
+      };
 
-      if (dataInput.limit) options.limit = parseInt(dataInput.limit);
+      if(dataInput.limit) options.limit=parseInt(dataInput.limit)
 
       let data = await db.Clinic.findAll(options);
 
@@ -102,26 +103,26 @@ let getAllClinic = (dataInput) => {
 let filterClinics = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let options = {
+      let options = { 
         where: {},
         raw: true,
-        nest: true,
+        nest: true, 
       };
-      let name = data.name;
-      let address = data.address;
+      let name=data.name;
+      let address=data.address;
 
-      if (name) {
-        options.where.name = {
-          [Op.like]: "%" + name + "%",
-        };
-      }
-      if (address) {
-        options.where.address = {
-          [Op.like]: "%" + address + "%",
-        };
-      }
+      if(name){
+        options.where.name={
+          [Op.like]: '%'+name+'%'
+        }
+      } 
+      if(address){
+        options.where.address={
+          [Op.like]:'%'+address+'%'
+        }
+      } 
 
-      let dataClinics = [];
+      let dataClinics=[]
       dataClinics = await db.Clinic.findAll(options);
 
       if (dataClinics && dataClinics.length > 0) {
@@ -134,10 +135,10 @@ let filterClinics = (data) => {
       resolve({
         errCode: 0,
         errMessage: "Ok!",
-        data: dataClinics,
+        data:dataClinics,
       });
     } catch (e) {
-      console.log(e);
+      console.log(e)
       reject(e);
     }
   });
@@ -160,7 +161,7 @@ let getDetailClinicById = (inputId) => {
             "address",
             "descriptionHTML",
             "descriptionMarkdown",
-            "image",
+            "image"
           ],
         });
         if (data) {
@@ -213,11 +214,13 @@ let deleteClinic = (clinicId) => {
   });
 };
 
+
+
 module.exports = {
   createClinic: createClinic,
   getAllClinic: getAllClinic,
   getDetailClinicById: getDetailClinicById,
-  filterClinics: filterClinics,
-  udateClinicData: udateClinicData,
-  deleteClinic: deleteClinic,
+  filterClinics:filterClinics,
+  udateClinicData:udateClinicData,
+  deleteClinic:deleteClinic
 };

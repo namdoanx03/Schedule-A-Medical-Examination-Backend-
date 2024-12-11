@@ -41,6 +41,6 @@ module.exports = {
   handleCreateNewDrug: handleCreateNewDrug,
   handleEditDrug: handleEditDrug,
   handleDeleteDrug: handleDeleteDrug,
-  filter: filter,
-  getDrugInfoById: getDrugInfoById,
+  filter:filter,
+  getDrugInfoById:getDrugInfoById
 };

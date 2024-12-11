@@ -10,10 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       History.belongsTo(models.User, {
-        foreignKey: "doctorId",
-        targetKey: "id",
-        as: "doctorDataHistory",
-      });
+          foreignKey: "doctorId",
+          targetKey: "id",
+          as: "doctorDataHistory",
+        });
     }
   }
   History.init(
@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       files: DataTypes.TEXT,
       drugs: DataTypes.TEXT,
       reason: DataTypes.STRING,
-      createdAt: DataTypes.DATE,
-      updatedAt: DataTypes.DATE,
+      createdAt:DataTypes.DATE,
+      updatedAt:DataTypes.DATE
     },
     {
       sequelize,
